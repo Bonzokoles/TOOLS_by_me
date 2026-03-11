@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Workspace Specification",
+  "version": "1.0.0",
+  "lastUpdated": "YYYY-MM-DD",
+  "metadata": {
+    "name": "PROJECT_NAME",
+    "type": "single-repo | multi-repo | monorepo",
+    "root": "ABSOLUTE_PATH",
+    "owner": "Bonzokoles",
+    "description": "Opis projektu w jednym zdaniu",
+    "architecture": "monolith | microservices | serverless | hybrid",
+    "primaryTechStack": []
+  },
+  "repositories": {
+    "root": {
+      "path": ".",
+      "type": "orchestrator | application | library",
+      "remote": "https://github.com/Bonzokoles/REPO_NAME.git",
+      "branch": "main"
+    },
+    "submodules": []
+  },
+  "services": {
+    "_example": {
+      "runtime": "bun | node | python | deno",
+      "entry": "src/index.ts",
+      "port": 3000,
+      "type": "api | frontend | worker | agent",
+      "features": []
+    }
+  },
+  "portAllocations": {
+    "range": "START-END",
+    "specific": {},
+    "configFile": "config/ports.env"
+  },
+  "mcpServers": {
+    "local": [],
+    "npx": [],
+    "url": [],
+    "configFile": ".workspace_meta/mcp/config.json"
+  },
+  "environmentVariables": {
+    "WORKSPACE_ROOT": "ABSOLUTE_PATH"
+  },
+  "conventions": {
+    "packageManager": "bun | npm | pnpm | yarn",
+    "commitFormat": "[type] description",
+    "typesOfCommits": ["feat", "fix", "docs", "refactor", "test", "chore", "perf", "style"]
+  },
+  "documentation": {
+    "root": ".workspace_meta",
+    "primary": [
+      ".workspace_meta/README.md",
+      "README.md"
+    ],
+    "notes": ".workspace_meta/notes",
+    "architecture": ".workspace_meta/notes/decisions.md"
+  },
+  "criticalRules": [
+    "ZAWSZE aktualizuj workspace.spec.json po zmianie architektury",
+    "NIGDY nie commituj secrets do repo",
+    "ZAWSZE dokumentuj decyzje architektoniczne w notes/decisions.md"
+  ]
+}
