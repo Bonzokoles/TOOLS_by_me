@@ -42,5 +42,27 @@ Uniwersalny meta-folder template (v2.0) dołączany do KAŻDEGO nowego workspace
 Copy-Item -Recurse ".workspace_meta" "ŚCIEŻKA_DO_WORKSPACE\.workspace_meta"
 ```
 
+### TOOLS_CATALOG/
+Standalone HTML katalog 88+ narzędzi deweloperskich z dark theme UI.
+
+**Możliwości:**
+- 88+ narzędzi w 12 kategoriach (AI, Cloud, DevOps, Security, Frontend, Backend...)
+- System ocen 3 gwiazdek (★★★) — klikalny rating na kartach i w modalu
+- Auto-fetch z URL — wklej link GitHub/dowolny i automatycznie pobierze metadane
+- Auto-kategoryzacja i auto-tagi na podstawie treści README
+- Filtrowanie po kategoriach, statusie (Priorytet/Wdrożone/Odrzucone) i gwiazdkach
+- LocalStorage persistence — dodane narzędzia i zmiany statusów zapisywane lokalnie
+- Export JSON całego katalogu
+- Responsywny glassmorphism dark UI
+
+**Użycie:**
+```powershell
+# Otwórz w przeglądarce
+start TOOLS_CATALOG.html
+
+# Lub z file protocol
+start "file:///C:/Users/Bonzo2/Desktop/TOOLS_CATALOG.html"
+```
+
 ## Licencja
 Użytek prywatny
