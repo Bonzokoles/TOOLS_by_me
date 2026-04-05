@@ -1,0 +1,7 @@
+{
+  "_comment": "Wklej ten wpis do .workspace_meta/mcp/config.json w sekcji mcpServers",
+  "gitnexus": {
+    "command": "cmd",
+    "args": ["/c", "npx", "-y", "gitnexus@latest", "mcp"]
+  }
+}

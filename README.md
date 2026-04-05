@@ -64,5 +64,23 @@ start TOOLS_CATALOG.html
 start "file:///C:/Users/Bonzo2/Desktop/TOOLS_CATALOG.html"
 ```
 
+### GITNEXUS/
+Konfiguracja GitNexus — code intelligence dla workspace'ów VS Code (backup).
+
+**Zawiera:**
+- `agent/gitnexus.agent.md` — agent Copilot z protokołem impact/context/rename
+- `mcp-config-snippet.json` — wpis MCP do `.workspace_meta/mcp/config.json`
+- `vscode-system-prompt-snippet.md` — sekcja do globalnego `RULES.instructions.md`
+- `setup-workspace.ps1` — automatyczna konfiguracja workspace
+
+**Użycie:**
+```powershell
+# W rocie projektu:
+.\GITNEXUS\setup-workspace.ps1
+
+# Lub ręcznie:
+npx gitnexus analyze
+```
+
 ## Licencja
 Użytek prywatny
