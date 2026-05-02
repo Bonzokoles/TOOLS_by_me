@@ -1,0 +1,7 @@
+﻿{
+  "_category": "ai_llm",
+  "_category_name": "AI / LLM Tools",
+  "_description": "Modele językowe i narzędzia AI",
+  "_ai_hint": "Sprawdź te narzędzia gdy potrzebujesz AI / LLM Tools w pipeline agenta.",
+  "tools": []
+}
