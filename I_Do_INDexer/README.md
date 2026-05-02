@@ -1,54 +1,51 @@
-# I_Do_INDexer — Architecture
+# 🔍 ZENO I_Do_INDexer
 
-## Architektura
+Potężny silnik indeksujący strukturę plików, metadane oraz statystyki kodu, zintegrowany z systemem agentowym ZENO. 
+Odpowiada za tworzenie bazy wiedzy o dużych zbiorach danych (Protokół Sufiksów: `_01`).
 
+## 📁 Struktura Folderu
 ```
-\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
-\u2502           CLI (Typer/Argparse)              \u2502
-\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
-               \u2502
-\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
-\u2502         AsyncScanner (Producer)             \u2502
-\u2502  - os.scandir() w thread pool               \u2502
-\u2502  - BFS z max_depth                           \u2502
-\u2502  - Early filtering (exclude patterns)       \u2502
-\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
-               \u2502 asyncio.Queue
-\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
-\u2502    MetadataOrchestrator (Consumer Pool)     \u2502
-\u2502  - Semaphore (limit 50 concurrent)          \u2502
-\u2502  - Pipeline extractors:                     \u2502
-\u2502    1. FileStatExtractor (low)                \u2502
-\u2502    2. MimeExtractor (low)                    \u2502
-\u2502    3. HashExtractor (high)                   \u2502
-\u2502    4. CodeExtractor (medium)                 \u2502
-\u2502    5. MediaExtractor (high)                  \u2502
-\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
-               \u2502
-\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
-\u2502      Output Strategy (Writer)               \u2502
-\u2502  - SQLite: batch INSERT (1000 rows/trans)   \u2502
-\u2502  - JSON: streaming dump                     \u2502
-\u2502  - JSONL: append line-by-line (low mem)     \u2502
-\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
+I_Do_INDexer/
+├── I_Do_INDEX.py         # Główny silnik Jimbo v2.0 (Logic)
+├── zeno_indexer.py       # Wrapper integrujący z JIMBOKIT_COMMS
+├── agent_indexer.bat     # Launcher dla Agentów (Pi/Goose)
+├── .venv/                # Izolowane środowisko Python
+└── README.md             # Ta dokumentacja
 ```
 
-## Zale\u017cno\u015bci
+---
 
-### Wymagane
-- `pydantic>=2.0` \u2014 walidacja i modele danych
-- `aiosqlite>=0.19` \u2014 async SQLite
-- `aiofiles>=23.0` \u2014 async file I/O
-- `pathspec>=0.11` \u2014 .gitignore-like patterns
-- `typer>=0.9` \u2014 CLI
+## 👨‍💻 Instrukcja dla Użytkownika (Bonzo)
 
-### Opcjonalne
-- `python-magic>=0.4.27` \u2014 MIME detection (libmagic)
-- `Pillow>=10.0` \u2014 wymiary obraz\u00f3w
-- `pymediainfo>=6.0` \u2014 metadane video/audio
-- `orjson>=3.9` \u2014 szybki JSON
-- `tqdm>=4.66` \u2014 progress bar
+Narzędzie służy do błyskawicznego mapowania dużych folderów lub dysków.
 
-## Wymagania
-- Python 3.11+
-- Windows / Linux / macOS
+1. **Uruchomienie ręczne:** Jeśli chcesz zaindeksować konkretny folder do bazy SQLite:
+   ```cmd
+   agent_indexer.bat "C:\Twoja\Sciezka" moja_baza
+   ```
+2. **Wynik:** Plik `moja_baza_01.db` pojawi się w folderze `JIMBOKIT_COMMS`.
+3. Możesz go otworzyć dowolną przeglądarką SQLite, aby zobaczyć statystyki plików, hashe, rozmiary i typy MIME.
+
+---
+
+## 🤖 STEPS & INSTRUCTIONS FOR AGENT PI / GOOSE
+
+Jako Agent, używasz tego narzędzia do "zrozumienia" struktury dużych zbiorów danych, których nie możesz przeczytać w całości do kontekstu.
+
+### Zadanie: Indeksowanie zasobów
+Zawsze, gdy musisz przeanalizować folder z dużą ilością plików (>10MB danych), użyj `agent_indexer.bat`.
+
+**Komenda:**
+```cmd
+cd U:\WWW_Zen_BRo_wser_tool\I_Do_INDexer
+agent_indexer.bat "<TARGET_PATH>" "<JOB_NAME>"
+```
+
+**Workflow:**
+1. Zaindeksuj dane do pliku `_01.db`.
+2. Użyj skilla `sqlite_query`, aby przeszukać bazę `_01.db` w poszukiwaniu konkretnych plików (np. "znajdź wszystkie obrazy powyżej 5MB" lub "pokaż pliki modyfikowane wczoraj").
+3. Na podstawie wyników z bazy, decyduj które konkretne pliki wczytać do dalszej analizy.
+
+---
+**Status Dokumentu:** MANDATE (ZENO Standard)
+**Ostatnia aktualizacja:** 26 Kwietnia 2026

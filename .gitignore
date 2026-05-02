@@ -16,3 +16,15 @@ Thumbs.db
 *.db-wal
 *.db-shm
 test_output.*
+
+# Clutter / OS artifacts
+agents.cmd
+computer.cmd
+grok-e2e.out
+icon.ico
+icon.txt
+
+# Local backups (not for repo)
+*-restore.html
+*-backup-*.html
+*-backup-*.js

@@ -34,7 +34,7 @@ try:
     from pathspec.patterns import GitWildMatchPattern
     from pydantic import BaseModel, ConfigDict, Field, ValidationError
 except ImportError as e:
-    print(f"Brakuj\u0105ca zale\u017cno\u015b\u0107: {e}")
+    print(f"Brakująca zależność: {e}")
     print("pip install pydantic aiosqlite aiofiles pathspec")
     sys.exit(1)
 
@@ -75,7 +75,7 @@ except ImportError:
 
 
 # =============================================================================
-# MODELE (Immutable, bezpieczne dla wielow\u0105tkowo\u015bci)
+# MODELE (Immutable, bezpieczne dla wielowątkowości)
 # =============================================================================
 
 
@@ -126,7 +126,7 @@ class FileIndexEntry(BaseModel):
 
 
 # =============================================================================
-# EKSTRAKTORY (Poprawione b\u0142\u0119dy logiczne)
+# EKSTRAKTORY (Poprawione błędy logiczne)
 # =============================================================================
 
 
@@ -435,7 +435,7 @@ class MediaExtractor(BaseExtractor):
 
 
 # =============================================================================
-# SCANNER (Poprawione bezpiecze\u0144stwo \u015bcie\u017cek)
+# SCANNER (Poprawione bezpieczeństwo ścieżek)
 # =============================================================================
 
 
@@ -660,7 +660,7 @@ class SQLiteWriter(BaseWriter):
             await self.conn.commit()
             self._total_written += len(rows)
         except Exception as e:
-            print(f"B\u0142\u0105d zapisu do SQLite: {e}", file=sys.stderr)
+            print(f"Błąd zapisu do SQLite: {e}", file=sys.stderr)
             raise
 
         self.buffer = []
@@ -670,7 +670,7 @@ class SQLiteWriter(BaseWriter):
         if self.conn:
             await self.conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             await self.conn.close()
-            print(f"Zapisano {self._total_written} rekord\u00f3w do SQLite")
+            print(f"Zapisano {self._total_written} rekordów do SQLite")
 
 
 class JSONWriter(BaseWriter):
@@ -701,7 +701,7 @@ class JSONWriter(BaseWriter):
             ending = "\n]" if not self._first else "]"
             await self._file.write(ending)
             await self._file.close()
-            print(f"Zapisano {self._count} rekord\u00f3w do JSON")
+            print(f"Zapisano {self._count} rekordów do JSON")
 
 
 class JSONLWriter(BaseWriter):
@@ -750,7 +750,7 @@ class JSONLWriter(BaseWriter):
             await self._flush()
             if self._file:
                 await self._file.close()
-            print(f"Zapisano {self._count} rekord\u00f3w do JSONL")
+            print(f"Zapisano {self._count} rekordów do JSONL")
 
 
 # =============================================================================
@@ -872,7 +872,7 @@ class MetadataOrchestrator:
 
 def setup_signal_handlers(orchestrator: MetadataOrchestrator):
     def handler(signum, frame):
-        print("\nOtrzymano sygna\u0142 zako\u0144czenia, zamykanie...", file=sys.stderr)
+        print("\nOtrzymano sygnał zakończenia, zamykanie...", file=sys.stderr)
         orchestrator.shutdown()
 
     signal.signal(signal.SIGINT, handler)
@@ -928,7 +928,7 @@ async def run_scan(config: ScanConfig, args: Dict[str, Any]) -> None:
         await scanner_task
         await processor_task
     except Exception as e:
-        print(f"B\u0142\u0105d krytyczny: {e}", file=sys.stderr)
+        print(f"Błąd krytyczny: {e}", file=sys.stderr)
         raise
 
     duration = (datetime.now(timezone.utc) - start_time).total_seconds()
@@ -937,9 +937,9 @@ async def run_scan(config: ScanConfig, args: Dict[str, Any]) -> None:
     print(f"Czas wykonania: {duration:.2f}s")
     print(f"Przeskanowano: {scanner.scanned_count}")
     print(f"Przetworzono: {orchestrator.processed}")
-    print(f"B\u0142\u0119dy skanera: {scanner.error_count}")
-    print(f"B\u0142\u0119dy procesora: {orchestrator.failed}")
-    print(f"Wydajno\u015b\u0107: {orchestrator.processed / max(duration, 0.001):.0f} plik\u00f3w/sek")
+    print(f"Błędy skanera: {scanner.error_count}")
+    print(f"Błędy procesora: {orchestrator.failed}")
+    print(f"Wydajność: {orchestrator.processed / max(duration, 0.001):.0f} plików/sek")
     print(f"Wynik: {output_path}")
     print(f"{'=' * 50}")
 
@@ -956,7 +956,7 @@ def main():
 
         @app.command()
         def scan(
-            path: Annotated[str, typer.Argument(help="\u015acie\u017cka do zeskanowania")],
+            path: Annotated[str, typer.Argument(help="Ścieżka do zeskanowania")],
             output: Annotated[str, typer.Option("--output", "-o")] = "index.db",
             format: Annotated[
                 OutputFormat, typer.Option("--format", "-f")
