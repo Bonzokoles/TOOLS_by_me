@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APP_CATALOG</title>
+<style>
+:root {
+  --bg:        #090705;
+  --bg2:       #100c07;
+  --bg3:       #1e1408;
+  --border:    #2e2018;
+  --border2:   #524438;
+  --accent:    #ff9a3c;
+  --accent2:   #ffb347;
+  --accent-dim:#ff9a3c18;
+  --text:      #e0d0c0;
+  --text2:     #7a6a58;
+  --text3:     #524438;
+  --red:       #c0392b;
+  --green:     #2ecc71;
+  --blue:      #5e6ad2;
+  --font:      'Lucida Console','Courier New',monospace;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+html,body {
+  width:100%; min-height:100vh;
+  background:var(--bg); color:var(--text);
+  font-family:var(--font); overflow-x:hidden;
+}
+
+/* scanlines */
+body::before {
+  content:''; position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline-color) 2px,var(--scanline-color) 4px);
+  pointer-events:none; z-index:9999;
+}
+/* grid bg */
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);
+  background-size:40px 40px; pointer-events:none; z-index:-1;
+}
+
+/* ── HEADER ── */
+.header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 20px; border-bottom:1px solid var(--border2);
+  background:var(--bg); position:sticky; top:0; z-index:100;
+}
+.header-left { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.brand { font-size:13px; font-weight:700; color:var(--accent); letter-spacing:3px; text-transform:uppercase; }
+.brand::before { content:'> '; color:var(--text3); }
+.brand-sub { font-size:9px; color:var(--text3); letter-spacing:2px; }
+.header-actions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+
+/* ── BUTTONS (ctrl-btn style) ── */
+.btn {
+  background:var(--bg2); border:1px solid var(--border2);
+  color:var(--text2); font-family:inherit; font-size:10px;
+  padding:5px 12px; cursor:pointer; outline:none;
+  transition:all .12s; letter-spacing:1px; text-transform:uppercase;
+  white-space:nowrap;
+}
+.btn:hover { border-color:var(--accent); color:var(--accent); }
+.btn.active { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+.btn-accent { border-color:var(--accent); color:var(--accent); }
+.btn-accent:hover { background:var(--accent-dim); }
+
+/* ── LAYOUT ── */
+.layout { display:flex; min-height:calc(100vh - 44px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:190px; min-width:190px; background:var(--bg2);
+  border-right:1px solid var(--border); padding:10px 0;
+  height:calc(100vh - 44px); overflow-y:auto;
+  position:sticky; top:44px;
+}
+.sidebar-label {
+  font-size:8px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text3);
+  padding:8px 12px 4px; border-left:2px solid var(--accent);
+  margin-bottom:2px;
+}
+.cat-btn {
+  width:100%; text-align:left; background:transparent; border:none;
+  border-left:2px solid transparent; color:var(--text2);
+  padding:5px 10px 5px 12px; cursor:pointer; font-size:10px;
+  font-family:inherit; letter-spacing:.5px;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:all .1s; gap:4px;
+}
+.cat-btn:hover { background:var(--bg3); color:var(--text); border-left-color:var(--border2); }
+.cat-btn.active { color:var(--accent); border-left-color:var(--accent); background:var(--accent-dim); }
+.cat-label { display:flex; align-items:center; gap:6px; font-size:10px; }
+.cat-count {
+  font-size:9px; background:var(--bg3); padding:1px 5px;
+  color:var(--text3); border:1px solid var(--border); flex-shrink:0;
+}
+.sidebar-sep { border:0; border-top:1px solid var(--border); margin:6px 10px; }
+
+/* ── MAIN ── */
+main { flex:1; padding:14px 18px; min-width:0; }
+
+.main-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+
+/* search bar */
+.search-bar {
+  display:flex; align-items:center;
+  background:var(--bg2); border:1px solid var(--border2);
+  height:34px; min-width:220px; flex:1; position:relative;
+  transition:border-color .15s;
+}
+.search-bar:focus-within { border-color:var(--accent); }
+.search-bar::before { content:'>'; position:absolute; left:10px; color:var(--accent); font-size:12px; }
+.search-input {
+  flex:1; background:none; border:none; outline:none;
+  color:var(--text); font-size:11px; font-family:inherit;
+  padding:0 10px 0 24px;
+}
+.search-input::placeholder { color:var(--text3); }
+
+/* filter pills */
+.pills { display:flex; gap:4px; flex-wrap:wrap; }
+.pill {
+  padding:3px 9px; font-size:9px; font-family:inherit; letter-spacing:1px;
+  text-transform:uppercase; background:transparent;
+  border:1px solid var(--border); color:var(--text3); cursor:pointer; transition:all .1s;
+}
+.pill:hover { border-color:var(--accent); color:var(--accent); }
+.pill.active { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+
+/* stats row */
+.stats { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
+.stat { font-size:9px; color:var(--text3); letter-spacing:.5px; }
+.stat-n { color:var(--accent); font-weight:700; }
+
+/* section title */
+.sec-title {
+  font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text3); margin-bottom:8px; margin-top:18px;
+  display:flex; align-items:center; gap:8px;
+}
+.sec-title:first-of-type { margin-top:0; }
+.sec-title::before { content:''; width:8px; height:1px; background:var(--accent); flex-shrink:0; }
+
+/* ── CARDS GRID ── */
+.cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:4px; margin-bottom:4px; }
+
+.card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-left:2px solid var(--border2);
+  cursor:pointer;
+  transition:all .15s; position:relative; overflow:hidden;
+}
+.card::after {
+  content:''; position:absolute; top:0; right:0;
+  width:14px; height:14px;
+  background:linear-gradient(135deg,transparent 50%,var(--accent-dim) 50%);
+  opacity:0; transition:opacity .15s; pointer-events:none; z-index:2;
+}
+.card:hover::after { opacity:1; }
+.card:hover { background:var(--bg3); border-left-color:var(--accent); }
+.card.open { border-color:var(--border2); border-left-color:var(--accent); background:var(--bg3); }
+
+/* ── THUMBNAIL ── */
+.card-thumb {
+  width:100%; height:130px;
+  background:var(--bg3);
+  overflow:hidden; position:relative; flex-shrink:0;
+}
+.card-thumb img {
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:opacity .2s;
+}
+.card-thumb-placeholder {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; height:100%;
+  font-size:10px; color:var(--text3); letter-spacing:1px;
+  text-align:center; padding:8px;
+}
+
+/* ── CARD BODY ── */
+.card-body { padding:10px 10px 8px; }
+
+.card-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.card-ico {
+  width:26px; height:26px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border); background:var(--bg3);
+  font-size:13px; overflow:hidden;
+}
+.card-ico img { width:18px; height:18px; object-fit:contain; }
+.card-info { min-width:0; flex:1; }
+.card-name { font-size:11px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.card-url  { font-size:9px; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+
+.card-badge {
+  font-size:8px; padding:1px 5px; letter-spacing:1px;
+  text-transform:uppercase; border:1px solid; flex-shrink:0;
+}
+.badge-fav       { color:var(--accent); border-color:var(--accent); background:var(--accent-dim); }
+.badge-installed { color:var(--green);  border-color:var(--green);  background:rgba(46,204,113,.08); }
+.badge-try       { color:var(--text3);  border-color:var(--border2); background:transparent; }
+.badge-archived  { color:var(--red);    border-color:var(--red);    background:rgba(192,57,43,.08); }
+
+.card-desc { font-size:9px; color:var(--text2); line-height:1.5; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+.card-tags { display:flex; flex-wrap:wrap; gap:3px; }
+.tag { font-size:8px; padding:1px 5px; letter-spacing:.5px; border:1px solid var(--border); color:var(--text3); }
+.tag.ai      { color:#e040fb; border-color:rgba(224,64,251,.3); }
+.tag.dev     { color:var(--blue); border-color:rgba(94,106,210,.3); }
+.tag.free    { color:var(--green); border-color:rgba(46,204,113,.3); }
+.tag.paid    { color:var(--accent); border-color:var(--accent-dim); }
+.tag.pwa     { color:#4bcffa; border-color:rgba(75,207,250,.3); }
+.tag.design  { color:#ff6d9d; border-color:rgba(255,109,157,.3); }
+.tag.cloud   { color:#4bcffa; border-color:rgba(75,207,250,.3); }
+
+/* card expand */
+.card-expand { display:none; padding:8px 10px 10px; border-top:1px solid var(--border); }
+.card.open .card-expand { display:block; }
+.card-notes { font-size:9px; color:var(--text2); font-style:italic; border-left:2px solid var(--border2); padding:3px 7px; margin-bottom:8px; line-height:1.6; }
+.card-actions { display:flex; gap:4px; flex-wrap:wrap; }
+.card-actions .btn { font-size:9px; padding:3px 9px; }
+
+.expand-hint { font-size:8px; color:var(--text3); text-align:right; margin-top:4px; padding-right:10px; padding-bottom:6px; opacity:.4; letter-spacing:.5px; }
+.card:hover .expand-hint { opacity:.8; }
+.card.open .expand-hint { display:none; }
+
+/* empty */
+.empty { text-align:center; padding:60px 20px; color:var(--text3); }
+.empty-icon { font-size:2.5rem; margin-bottom:10px; opacity:.2; }
+.empty p { font-size:10px; letter-spacing:1px; line-height:2; }
+
+/* ── MODALS ── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.88); z-index:1000;
+  overflow-y:auto; padding:40px 20px;
+  justify-content:center; align-items:flex-start;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:var(--bg2); border:1px solid var(--border2);
+  border-top:2px solid var(--accent);
+  padding:22px; width:100%; max-width:560px;
+  position:relative; max-height:90vh; overflow-y:auto;
+}
+.modal-title {
+  font-size:12px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--accent);
+  margin-bottom:18px; padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+}
+.modal-close {
+  position:absolute; top:12px; right:12px;
+  background:transparent; border:1px solid transparent;
+  color:var(--text3); font-size:12px; cursor:pointer;
+  width:24px; height:24px; display:flex; align-items:center; justify-content:center;
+  font-family:inherit; transition:all .12s;
+}
+.modal-close:hover { color:var(--red); border-color:var(--red); }
+
+.f-row { margin-bottom:12px; }
+.f-row label {
+  display:block; font-size:8px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--text3); margin-bottom:4px;
+}
+.f-row input, .f-row select, .f-row textarea {
+  width:100%; padding:6px 10px;
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--text); font-size:11px; font-family:inherit;
+  transition:border-color .1s; outline:none;
+}
+.f-row input:focus, .f-row select:focus, .f-row textarea:focus { border-color:var(--accent); }
+.f-row textarea { resize:vertical; min-height:60px; }
+.f-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.f-grid3 { display:grid; grid-template-columns:60px 1fr 1fr; gap:10px; }
+
+.fetch-row { display:flex; gap:8px; align-items:flex-end; margin-bottom:12px; }
+.fetch-row .f-row { flex:1; margin-bottom:0; }
+.fetch-status { font-size:9px; letter-spacing:.5px; height:18px; margin-bottom:10px; }
+.fetch-status.ok  { color:var(--green); }
+.fetch-status.err { color:var(--red); }
+.fetch-status.loading { color:var(--accent2); }
+
+/* favicon preview in modal */
+.fav-preview { width:32px; height:32px; border:1px solid var(--border2); background:var(--bg3); display:flex; align-items:center; justify-content:center; overflow:hidden; margin-top:6px; }
+.fav-preview img { width:20px; height:20px; object-fit:contain; }
+
+/* thumbnail preview in modal */
+.thumb-preview-row {
+  margin-bottom:12px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.thumb-preview-box {
+  width:100%; height:90px; background:var(--bg3);
+  border:1px solid var(--border2); overflow:hidden; position:relative;
+}
+.thumb-preview-box img {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.thumb-preview-box .thumb-ph {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; height:100%; font-size:9px; color:var(--text3); letter-spacing:1px;
+}
+.thumb-refresh-btn {
+  align-self:flex-start;
+}
+
+/* star rating */
+.stars-row { display:flex; gap:6px; align-items:center; margin-top:4px; }
+.stars-row span { font-size:16px; cursor:pointer; color:var(--border2); transition:color .1s; user-select:none; }
+.stars-row span.on { color:var(--accent); }
+
+.modal-actions { display:flex; gap:8px; margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
+.modal-actions .btn { flex:1; padding:7px; text-align:center; font-size:10px; }
+.btn-save { border-color:var(--accent); color:var(--accent); }
+.btn-save:hover { background:var(--accent-dim); }
+.btn-cancel { border-color:var(--border2); }
+
+/* scrollbar */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border2); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <span class="brand">APP_CATALOG</span>
+    <span class="brand-sub">ulubione aplikacje web</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-accent" data-hbtn="add-url">&#x229E; Dodaj z URL</button>
+    <button class="btn" data-hbtn="add-manual">+ Ręcznie</button>
+    <button class="btn" data-hbtn="import">&#x2193; Import JSON</button>
+    <button class="btn" data-hbtn="export">&#x2191; Eksport JSON</button>
+    <button class="btn" data-hbtn="clear" title="Wyczyść cały katalog">&#x2715; Wyczyść</button>
+  </div>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main>
+    <div class="main-top">
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Szukaj (nazwa, URL, opis, tag)...">
+      </div>
+      <div class="pills" id="statusPills">
+        <button class="pill active" data-status="all">Wszystkie</button>
+        <button class="pill" data-status="fav">&#x2B50; Ulubione</button>
+        <button class="pill" data-status="installed">&#x2705; Zainstalowane</button>
+        <button class="pill" data-status="try">&#x25FB; Do sprawdzenia</button>
+        <button class="pill" data-status="archived">&#x00D7; Archiwum</button>
+      </div>
+      <div class="pills" id="starsPills">
+        <button class="pill active" data-stars="0">&#x2605; Wszystkie</button>
+        <button class="pill" data-stars="1">&#x2605;+</button>
+        <button class="pill" data-stars="2">&#x2605;&#x2605;+</button>
+        <button class="pill" data-stars="3">&#x2605;&#x2605;&#x2605;</button>
+      </div>
+    </div>
+
+    <div class="stats" id="statsRow"></div>
+    <div id="cardsRoot"></div>
+  </main>
+</div>
+
+<!-- ═══ AUTO-FETCH MODAL ═══ -->
+<div class="overlay" id="afOverlay">
+  <div class="modal">
+    <button class="modal-close">&#x2715;</button>
+    <div class="modal-title">&#x229E; Dodaj z URL</div>
+
+    <div class="fetch-row">
+      <div class="f-row">
+        <label>URL strony / aplikacji</label>
+        <input type="url" id="afUrl" placeholder="https://...">
+      </div>
+      <button class="btn btn-accent" id="afFetchBtn" style="padding:6px 14px;white-space:nowrap;height:32px;margin-top:20px">Pobierz &#x2192;</button>
+    </div>
+    <div class="fetch-status" id="afStatus"></div>
+
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+      <div>
+        <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Favicon</div>
+        <div class="fav-preview" id="afFavPreview"><span style="font-size:11px;color:var(--text3)">?</span></div>
+      </div>
+      <div class="f-row" style="width:50px;margin-bottom:0">
+        <label>Ikona</label>
+        <input type="text" id="afIcon" value="#" maxlength="2" style="text-align:center">
+      </div>
+      <div class="f-row" style="flex:1;margin-bottom:0">
+        <label>Kategoria</label>
+        <select id="afCat"></select>
+      </div>
+    </div>
+
+    <div class="f-row">
+      <label>Nazwa *</label>
+      <input type="text" id="afName" maxlength="60">
+    </div>
+    <div class="f-row">
+      <label>URL (auto)</label>
+      <input type="url" id="afUrlFinal">
+    </div>
+    <div class="f-row">
+      <label>Krótki opis</label>
+      <input type="text" id="afDesc" maxlength="120">
+    </div>
+    <div class="f-row">
+      <label>Notatki</label>
+      <textarea id="afNotes" placeholder="Do czego używasz? Co warto wiedzieć?"></textarea>
+    </div>
+    <div class="f-grid2">
+      <div class="f-row">
+        <label>Status</label>
+        <select id="afStatus2">
+          <option value="try">&#x25FB; Do sprawdzenia</option>
+          <option value="fav">&#x2B50; Ulubione</option>
+          <option value="installed">&#x2705; Zainstalowane</option>
+          <option value="archived">&#x00D7; Archiwum</option>
+        </select>
+      </div>
+      <div class="f-row">
+        <label>Ocena</label>
+        <div class="stars-row" id="afStars">
+          <span>★</span>
+          <span>★</span>
+          <span>★</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-row">
+      <label>Tagi (przecinkami: ai, dev, free, paid, pwa, design, cloud)</label>
+      <input type="text" id="afTags" placeholder="ai, free">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-save" data-hbtn="af-save">&#x2705; Zapisz</button>
+      <button class="btn btn-cancel" data-hbtn="af-cancel">Anuluj</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD MANUAL MODAL ═══ -->
+<div class="overlay" id="addOverlay">
+  <div class="modal">
+    <button class="modal-close">&#x2715;</button>
+    <div class="modal-title">+ Dodaj ręcznie</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+      <div class="f-row" style="width:50px;margin-bottom:0">
+        <label>Ikona</label>
+        <input type="text" id="fIcon" value="#" maxlength="2" style="text-align:center">
+      </div>
+      <div class="f-row" style="flex:1;margin-bottom:0">
+        <label>Kategoria</label>
+        <select id="fCat"></select>
+      </div>
+    </div>
+    <div class="f-row">
+      <label>Nazwa *</label>
+      <input type="text" id="fName" maxlength="60">
+    </div>
+    <div class="f-row">
+      <label>URL *</label>
+      <input type="url" id="fUrl" placeholder="https://...">
+    </div>
+    <div class="f-row">
+      <label>Opis</label>
+      <input type="text" id="fDesc" maxlength="120">
+    </div>
+    <div class="f-row">
+      <label>Notatki</label>
+      <textarea id="fNotes" placeholder="Do czego używasz?"></textarea>
+    </div>
+    <div class="f-grid2">
+      <div class="f-row">
+        <label>Status</label>
+        <select id="fStatus">
+          <option value="try">&#x25FB; Do sprawdzenia</option>
+          <option value="fav">&#x2B50; Ulubione</option>
+          <option value="installed">&#x2705; Zainstalowane</option>
+          <option value="archived">&#x00D7; Archiwum</option>
+        </select>
+      </div>
+      <div class="f-row">
+        <label>Ocena</label>
+        <div class="stars-row" id="fStars">
+          <span>★</span>
+          <span>★</span>
+          <span>★</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-row">
+      <label>Tagi</label>
+      <input type="text" id="fTags" placeholder="ai, free, pwa">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-save" data-hbtn="manual-save">&#x2705; Zapisz</button>
+      <button class="btn btn-cancel" data-hbtn="manual-cancel">Anuluj</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT MODAL ═══ -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <button class="modal-close">&#x2715;</button>
+    <div class="modal-title">&#x270F; Edytuj</div>
+    <input type="hidden" id="eId">
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+      <div class="f-row" style="width:50px;margin-bottom:0">
+        <label>Ikona</label>
+        <input type="text" id="eIcon" maxlength="2" style="text-align:center">
+      </div>
+      <div class="f-row" style="flex:1;margin-bottom:0">
+        <label>Kategoria</label>
+        <select id="eCat"></select>
+      </div>
+    </div>
+    <div class="f-row"><label>Nazwa</label><input type="text" id="eName" maxlength="60"></div>
+    <div class="f-row"><label>URL</label><input type="url" id="eUrl"></div>
+
+    <!-- Thumbnail preview + refresh -->
+    <div class="thumb-preview-row">
+      <label style="font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3)">Miniatura</label>
+      <div class="thumb-preview-box" id="eThumbPreviewBox">
+        <div class="thumb-ph" id="eThumbPh">brak miniatury</div>
+        <img id="eThumbImg" src="" alt="" style="display:none">
+      </div>
+      <button class="btn thumb-refresh-btn" data-hbtn="edit-thumb-refresh">&#x21BB; Odśwież miniaturę</button>
+    </div>
+
+    <div class="f-row"><label>Opis</label><input type="text" id="eDesc" maxlength="120"></div>
+    <div class="f-row"><label>Notatki</label><textarea id="eNotes"></textarea></div>
+    <div class="f-grid2">
+      <div class="f-row">
+        <label>Status</label>
+        <select id="eStatus">
+          <option value="try">&#x25FB; Do sprawdzenia</option>
+          <option value="fav">&#x2B50; Ulubione</option>
+          <option value="installed">&#x2705; Zainstalowane</option>
+          <option value="archived">&#x00D7; Archiwum</option>
+        </select>
+      </div>
+      <div class="f-row">
+        <label>Ocena</label>
+        <div class="stars-row" id="eStars">
+          <span>★</span>
+          <span>★</span>
+          <span>★</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-row"><label>Tagi</label><input type="text" id="eTags"></div>
+    <div class="modal-actions">
+      <button class="btn btn-save" data-hbtn="edit-save">&#x2705; Zapisz zmiany</button>
+      <button class="btn btn-cancel" data-hbtn="edit-cancel">Anuluj</button>
+    </div>
+  </div>
+</div>
+
+<script src="apps-catalog.js"></script>
+<!-- JS moved to apps-catalog.js (MV3 CSP requires external scripts) -->
+</body>
+</html>

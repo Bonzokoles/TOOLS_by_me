@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>THE_BRO_wser_lab</title>
+<style>
+:root {
+  --bg:        #000000;
+  --bg2:       #0d0d0d;
+  --bg3:       #111111;
+  --border:    #27272a;
+  --border2:   #3f3f46;
+  --accent:    #3b82f6;
+  --accent2:   #60a5fa;
+  --accent-dim:#3b82f618;
+  --text:      #ffffff;
+  --text2:     #a7a7a7;
+  --text3:     #52525b;
+  --green:     #27a644;
+  --red:       #ea2261;
+  --yellow:    #e8d44d;
+  --mono:      'Cascadia Code','Fira Code','Consolas','Courier New',monospace;
+  --ui:        'Lucida Console','Courier New',monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { width: 100%; height: 100vh; overflow: hidden;
+  background: var(--bg); color: var(--text); font-family: var(--ui); }
+
+/* ── APP SHELL ── */
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+/* ── HEADER ── */
+.header {
+  height: 38px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; background: var(--bg2);
+  border-bottom: 1px solid var(--border2);
+}
+
+.brand { font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; }
+.brand::before { content: '> '; color: var(--text3); }
+
+.header-right { display: flex; align-items: center; gap: 5px; }
+
+.sep { width: 1px; height: 14px; background: var(--border2); margin: 0 2px; }
+
+.btn {
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); font-family: var(--ui); font-size: 9px;
+  padding: 3px 9px; cursor: pointer; letter-spacing: 1px;
+  text-transform: uppercase; white-space: nowrap;
+  transition: border-color .1s, color .1s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-run  { border-color: var(--green); color: var(--green); }
+.btn-run:hover  { background: #27a64414; }
+.btn-save { border-color: var(--accent); color: var(--accent); }
+.btn-save:hover { background: var(--accent-dim); }
+
+select {
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); font-family: var(--ui); font-size: 9px;
+  padding: 3px 6px; cursor: pointer; letter-spacing: 1px; outline: none;
+}
+select:focus { border-color: var(--accent); }
+
+.auto-label {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 9px; color: var(--text3); letter-spacing: 1px;
+  cursor: pointer; text-transform: uppercase;
+}
+.auto-label input { accent-color: var(--accent); cursor: pointer; }
+
+/* ── EDITORS SECTION ── */
+.editors-section {
+  display: flex; flex-direction: column;
+  flex-shrink: 0; overflow: hidden;
+}
+
+.editors-row { display: flex; flex: 1; overflow: hidden; }
+
+.editor-pane {
+  flex: 1; display: flex; flex-direction: column;
+  border-right: 1px solid var(--border); min-width: 0;
+}
+.editor-pane:last-child { border-right: none; }
+
+.pane-label {
+  height: 26px; display: flex; align-items: center; padding: 0 10px; gap: 6px;
+  font-size: 9px; letter-spacing: 2px; color: var(--text3);
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  text-transform: uppercase; flex-shrink: 0; user-select: none;
+}
+.pane-label .num { color: var(--accent); }
+.pane-label .chars { margin-left: auto; font-size: 8px; color: var(--border2); }
+
+textarea {
+  flex: 1; width: 100%; resize: none; border: none; outline: none;
+  background: var(--bg); color: var(--text);
+  font-family: var(--mono); font-size: 12px; line-height: 1.65;
+  padding: 10px 12px; tab-size: 2; caret-color: var(--accent);
+}
+textarea::selection { background: #3b82f628; }
+textarea:focus { background: #030303; }
+
+/* ── DRAG BAR ── */
+.drag-bar {
+  height: 5px; background: var(--border); flex-shrink: 0;
+  cursor: row-resize; display: flex; align-items: center; justify-content: center;
+  transition: background .12s;
+}
+.drag-bar:hover, .drag-bar.active { background: var(--accent); }
+.drag-bar::after {
+  content: ''; width: 36px; height: 1px;
+  background: var(--border2);
+}
+
+/* ── PREVIEW SECTION ── */
+.preview-section { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+.preview-bar {
+  height: 26px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 10px; background: var(--bg2);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+  font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase;
+  user-select: none;
+}
+.preview-bar-left { display: flex; align-items: center; gap: 8px; }
+.preview-bar-right { display: flex; align-items: center; gap: 5px; }
+
+#statusDot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border2); flex-shrink: 0; transition: background .2s;
+}
+#statusDot.ok  { background: var(--green); }
+#statusDot.err { background: var(--red); }
+#statusDot.run { background: var(--yellow); }
+
+#errBar {
+  background: #ea226114; border-bottom: 1px solid var(--red);
+  color: var(--red); font-size: 10px; font-family: var(--mono);
+  padding: 4px 12px; display: none; flex-shrink: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+#preview {
+  flex: 1; width: 100%; border: none; background: #ffffff;
+  display: block;
+}
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 14px; right: 14px; z-index: 999;
+  background: var(--bg2); border: 1px solid var(--border2);
+  color: var(--text2); font-family: var(--ui); font-size: 10px;
+  padding: 5px 14px; letter-spacing: 1px;
+  opacity: 0; pointer-events: none; transition: opacity .18s;
+}
+#toast.show { opacity: 1; }
+
+/* ── SLOT NAME INPUT ── */
+#slotName {
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); font-family: var(--ui); font-size: 9px;
+  padding: 3px 7px; width: 100px; outline: none; letter-spacing: 1px;
+}
+#slotName:focus { border-color: var(--accent); color: var(--text); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="header">
+    <div class="brand">THE_BRO_wser_lab</div>
+    <div class="header-right">
+      <select id="slotSel" title="Select slot"></select>
+      <input id="slotName" type="text" placeholder="name..." maxlength="24" title="Slot name">
+      <button class="btn btn-save" id="btnSave" title="Ctrl+S">Save</button>
+      <button class="btn" id="btnLoad">Load</button>
+      <button class="btn" id="btnDel">Del</button>
+      <div class="sep"></div>
+      <button class="btn" id="btnNew">New</button>
+      <button class="btn" id="btnExport" title="Export as .html">Export</button>
+      <div class="sep"></div>
+      <label class="auto-label" title="Auto-run on edit">
+        <input type="checkbox" id="chkAuto" checked> Auto
+      </label>
+      <button class="btn btn-run" id="btnRun" title="Ctrl+Enter">Run</button>
+    </div>
+  </header>
+
+  <div class="editors-section" id="editorsSection" style="height:46vh">
+    <div class="editors-row">
+
+      <div class="editor-pane">
+        <div class="pane-label">
+          <span class="num">01</span> HTML
+          <span class="chars" id="cntHTML">0</span>
+        </div>
+        <textarea id="edHTML" spellcheck="false" autocomplete="off"
+          placeholder="<!-- HTML here -->"></textarea>
+      </div>
+
+      <div class="editor-pane">
+        <div class="pane-label">
+          <span class="num">02</span> CSS
+          <span class="chars" id="cntCSS">0</span>
+        </div>
+        <textarea id="edCSS" spellcheck="false" autocomplete="off"
+          placeholder="/* CSS here */"></textarea>
+      </div>
+
+      <div class="editor-pane">
+        <div class="pane-label">
+          <span class="num">03</span> JS
+          <span class="chars" id="cntJS">0</span>
+        </div>
+        <textarea id="edJS" spellcheck="false" autocomplete="off"
+          placeholder="// JavaScript here"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="drag-bar" id="dragBar"></div>
+
+  <div class="preview-section">
+    <div class="preview-bar">
+      <div class="preview-bar-left">
+        <div id="statusDot"></div>
+        <span>PREVIEW</span>
+      </div>
+      <div class="preview-bar-right">
+        <button class="btn" id="btnBlank">Clear</button>
+        <button class="btn" id="btnFull">Full</button>
+      </div>
+    </div>
+    <div id="errBar"></div>
+    <iframe id="preview" sandbox="allow-scripts allow-modals allow-forms"></iframe>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── ELEMENTS ─────────────────────────────────────────────────────────────────
+const edHTML  = document.getElementById('edHTML');
+const edCSS   = document.getElementById('edCSS');
+const edJS    = document.getElementById('edJS');
+const preview = document.getElementById('preview');
+const slotSel = document.getElementById('slotSel');
+const slotName= document.getElementById('slotName');
+const statusDot = document.getElementById('statusDot');
+const errBar  = document.getElementById('errBar');
+const editorsSection = document.getElementById('editorsSection');
+const dragBar = document.getElementById('dragBar');
+const toastEl = document.getElementById('toast');
+
+// ── STARTER CODE ─────────────────────────────────────────────────────────────
+const STARTER_HTML = `<div class="card">
+  <div class="label">THE_BRO_wser_lab</div>
+  <div class="sub">Edit HTML / CSS / JS above — preview updates live</div>
+  <button onclick="ping()">ping</button>
+  <div id="out"></div>
+</div>`;
+
+const STARTER_CSS = `* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.card {
+  border: 1px solid #3b82f6;
+  padding: 40px 60px;
+  text-align: center;
+  max-width: 480px;
+}
+
+.label {
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: #3b82f6;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.sub {
+  font-size: 11px;
+  color: #52525b;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+button {
+  background: none;
+  border: 1px solid #3b82f6;
+  color: #3b82f6;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 5px 18px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+button:hover { background: #3b82f618; }
+
+#out {
+  margin-top: 14px;
+  font-size: 10px;
+  color: #27a644;
+  letter-spacing: 1px;
+  min-height: 16px;
+}`;
+
+const STARTER_JS = `let n = 0;
+function ping() {
+  n++;
+  document.getElementById('out').textContent = 'pong #' + n;
+}`;
+
+// ── STORAGE ──────────────────────────────────────────────────────────────────
+const STORE_KEY  = 'bro-lab-v1';
+const SLOT_COUNT = 12;
+
+function readStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; }
+}
+function writeStore(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+
+function buildSlots() {
+  const store = readStore();
+  const cur = slotSel.value;
+  slotSel.innerHTML = '';
+  for (let i = 1; i <= SLOT_COUNT; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    const s = store[i];
+    opt.textContent = s
+      ? `[${i}] ${s.name || 'slot ' + i}`
+      : `[${i}] empty`;
+    slotSel.appendChild(opt);
+  }
+  if (cur) slotSel.value = cur;
+}
+
+function saveSlot() {
+  const n = slotSel.value;
+  const store = readStore();
+  store[n] = {
+    html: edHTML.value, css: edCSS.value, js: edJS.value,
+    name: slotName.value.trim() || null,
+    ts: Date.now(),
+  };
+  writeStore(store);
+  buildSlots();
+  slotSel.value = n;
+  toast('Saved to slot ' + n);
+}
+
+function loadSlot() {
+  const n = slotSel.value;
+  const s = readStore()[n];
+  if (!s) { toast('Slot ' + n + ' is empty'); return; }
+  edHTML.value = s.html || '';
+  edCSS.value  = s.css  || '';
+  edJS.value   = s.js   || '';
+  slotName.value = s.name || '';
+  updateCounters();
+  run();
+  toast('Loaded slot ' + n);
+}
+
+function delSlot() {
+  const n = slotSel.value;
+  const store = readStore();
+  if (!store[n]) { toast('Already empty'); return; }
+  if (!confirm(`Clear slot ${n}?`)) return;
+  delete store[n];
+  writeStore(store);
+  buildSlots();
+  slotSel.value = n;
+  slotName.value = '';
+  toast('Slot ' + n + ' cleared');
+}
+
+// ── RUN ──────────────────────────────────────────────────────────────────────
+function buildDoc() {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8">` +
+    `<style>${edCSS.value}<\/style><\/head>` +
+    `<body>${edHTML.value}` +
+    `<script>${edJS.value}<\/script><\/body><\/html>`;
+}
+
+function run() {
+  statusDot.className = 'run';
+  errBar.style.display = 'none';
+  try {
+    preview.srcdoc = buildDoc();
+    statusDot.className = 'ok';
+  } catch(e) {
+    statusDot.className = 'err';
+    errBar.style.display = 'block';
+    errBar.textContent = e.message;
+  }
+}
+
+// ── AUTO-RUN ─────────────────────────────────────────────────────────────────
+let runTimer;
+function scheduleRun() {
+  if (!document.getElementById('chkAuto').checked) return;
+  clearTimeout(runTimer);
+  runTimer = setTimeout(run, 450);
+}
+
+function updateCounters() {
+  document.getElementById('cntHTML').textContent = edHTML.value.length;
+  document.getElementById('cntCSS').textContent  = edCSS.value.length;
+  document.getElementById('cntJS').textContent   = edJS.value.length;
+}
+
+[edHTML, edCSS, edJS].forEach(el => {
+  el.addEventListener('input', () => { updateCounters(); scheduleRun(); });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = el.selectionStart, end = el.selectionEnd;
+      el.value = el.value.slice(0, s) + '  ' + el.value.slice(end);
+      el.selectionStart = el.selectionEnd = s + 2;
+      scheduleRun();
+    }
+  });
+});
+
+// ── EXPORT ───────────────────────────────────────────────────────────────────
+function exportFile() {
+  const name = (slotName.value.trim() || 'bro-lab-export').replace(/[^a-z0-9_-]/gi, '_');
+  const blob = new Blob([buildDoc()], { type: 'text/html' });
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: name + '.html',
+  });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  toast('Exported: ' + name + '.html');
+}
+
+// ── NEW ───────────────────────────────────────────────────────────────────────
+function newDoc() {
+  edHTML.value = STARTER_HTML;
+  edCSS.value  = STARTER_CSS;
+  edJS.value   = STARTER_JS;
+  slotName.value = '';
+  updateCounters();
+  run();
+}
+
+// ── DRAG RESIZE ───────────────────────────────────────────────────────────────
+let dragging = false, dragStartY, dragStartH;
+
+dragBar.addEventListener('mousedown', e => {
+  dragging = true;
+  dragStartY = e.clientY;
+  dragStartH = editorsSection.offsetHeight;
+  dragBar.classList.add('active');
+  document.body.style.userSelect = 'none';
+  document.body.style.cursor = 'row-resize';
+});
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const h = Math.max(80, Math.min(window.innerHeight - 100,
+    dragStartH + (e.clientY - dragStartY)));
+  editorsSection.style.height = h + 'px';
+});
+document.addEventListener('mouseup', () => {
+  if (!dragging) return;
+  dragging = false;
+  dragBar.classList.remove('active');
+  document.body.style.userSelect = '';
+  document.body.style.cursor = '';
+});
+
+// ── FULL PREVIEW ─────────────────────────────────────────────────────────────
+let fullMode = false;
+document.getElementById('btnFull').addEventListener('click', () => {
+  fullMode = !fullMode;
+  editorsSection.style.display = fullMode ? 'none' : 'flex';
+  dragBar.style.display = fullMode ? 'none' : '';
+  document.getElementById('btnFull').textContent = fullMode ? 'Split' : 'Full';
+});
+
+document.getElementById('btnBlank').addEventListener('click', () => {
+  preview.srcdoc = '';
+  statusDot.className = '';
+});
+
+// ── KEYBOARD SHORTCUTS ───────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); run(); }
+  if (e.ctrlKey && e.key === 's')     { e.preventDefault(); saveSlot(); }
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+}
+
+// ── WIRE BUTTONS ─────────────────────────────────────────────────────────────
+document.getElementById('btnSave').addEventListener('click', saveSlot);
+document.getElementById('btnLoad').addEventListener('click', loadSlot);
+document.getElementById('btnDel').addEventListener('click', delSlot);
+document.getElementById('btnNew').addEventListener('click', newDoc);
+document.getElementById('btnExport').addEventListener('click', exportFile);
+document.getElementById('btnRun').addEventListener('click', run);
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+buildSlots();
+newDoc();
+</script>
+</body>
+</html>
