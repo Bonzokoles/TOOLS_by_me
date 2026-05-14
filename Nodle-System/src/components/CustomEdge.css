@@ -1,0 +1,19 @@
+.edge-info-marker {
+    background: #0a0d14;
+    border: 1px solid rgba(74, 158, 255, 0.4);
+    padding: 4px 8px;
+    border-radius: 0;
+    /* Sharp edges */
+    font-size: 10px;
+    color: #e8edf5;
+    font-family: 'Consolas', monospace;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edge-info-marker:hover {
+    border-color: #4a9eff;
+    box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+    transform: scale(1.1);
+}

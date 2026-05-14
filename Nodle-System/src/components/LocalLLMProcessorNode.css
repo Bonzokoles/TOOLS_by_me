@@ -1,0 +1,26 @@
+.node-service {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #0f3460;
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 320px;
+    max-width: 450px;
+    color: #eaeaea;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 4px 12px rgba(15, 52, 96, 0.5);
+}
+
+.node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #00d4ff;
+}
+
+.node-content {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,307 @@
+{
+  "nodes": [
+    {
+      "id": "hub-main",
+      "name": "DEVz HUB Dashboard",
+      "type": "application",
+      "description": "Central command center — KPIs, charts, KB, CC, AI models, converter, 3D viz, tasks",
+      "files": [],
+      "position": {
+        "x": -1368.8738652736247,
+        "y": -54.0448089906829
+      },
+      "metadata": {}
+    },
+    {
+      "id": "nodle-system",
+      "name": "Nodle System (YELLOW HUB)",
+      "type": "application",
+      "description": "React Flow + FastAPI — Interactive graph visualization with AI (OpenRouter + Claude 3.7 Sonnet)",
+      "files": [],
+      "position": {
+        "x": 282.47716532872346,
+        "y": 355.7294942761507
+      },
+      "metadata": {}
+    },
+    {
+      "id": "nodle-api",
+      "name": "Nodle Graph API",
+      "type": "api",
+      "description": "FastAPI backend — nodes, edges, OpenRouter integration, WebSocket realtime",
+      "files": [],
+      "position": {
+        "x": 890.5666384195802,
+        "y": 530.1244379554738
+      },
+      "metadata": {}
+    },
+    {
+      "id": "zeno-browser",
+      "name": "ZENO Browser",
+      "type": "application",
+      "description": "React 19 + Electron — Browser with AI integration, IPC, plugins",
+      "files": [],
+      "position": {
+        "x": -1370.7880890552954,
+        "y": 617.1515471602132
+      },
+      "metadata": {}
+    },
+    {
+      "id": "kb-store",
+      "name": "Knowledge Base",
+      "type": "kg",
+      "description": "21 kategorii wiedzy — 3892 plików, 4067 indexed chunks w ChromaDB",
+      "files": [],
+      "position": {
+        "x": -699.6058572209595,
+        "y": 731.5512503443581
+      },
+      "metadata": {}
+    },
+    {
+      "id": "libraries",
+      "name": "Strategic Libraries",
+      "type": "infrastructure",
+      "description": "4 main + 7 additional libraries — Money Machine, Bucket of Blood, The Now, Shadow Boxing + AI_LAB, TECH_VAULT etc.",
+      "files": [],
+      "position": {
+        "x": -190.89734088254585,
+        "y": 585.7519789589023
+      },
+      "metadata": {}
+    },
+    {
+      "id": "control-center",
+      "name": "Control Center",
+      "type": "infrastructure",
+      "description": "19 data folders — AI_TOOLS, BUSINESS_INTELLIGENCE, FILM_MEDIA, movies, TECH_RESEARCH etc. — 12,805 files total",
+      "files": [],
+      "position": {
+        "x": 1416.8936648207325,
+        "y": 705.2139433626623
+      },
+      "metadata": {}
+    },
+    {
+      "id": "chromadb",
+      "name": "ChromaDB",
+      "type": "vector_db",
+      "description": "Vector database — 4816 documents, 26 collections, 69MB",
+      "files": [],
+      "position": {
+        "x": -258.1845654450744,
+        "y": 441.62196899329706
+      },
+      "metadata": {}
+    },
+    {
+      "id": "caddy-proxy",
+      "name": "Caddy Reverse Proxy",
+      "type": "infrastructure",
+      "description": "Local reverse proxy — agent-zero:50001, dashboard:5025, movies:5675, jimbo:4880",
+      "files": [],
+      "position": {
+        "x": -1978.3609942408154,
+        "y": 314.6580057765665
+      },
+      "metadata": {}
+    },
+    {
+      "id": "cf-workers",
+      "name": "Cloudflare Workers",
+      "type": "service",
+      "description": "Edge compute — whitecat-api, moa-orchestrator, x402-payment, content-delivery",
+      "files": [],
+      "position": {
+        "x": -2038.516913080439,
+        "y": 703.8436859238775
+      },
+      "metadata": {}
+    },
+    {
+      "id": "ai-models",
+      "name": "AI Model Fleet",
+      "type": "ai",
+      "description": "6 models — DeepSeek R1, Claude Sonnet 4, GPT-4o, Qwen 2.5, Gemini Flash, Claude 4.5. Budget: $500/mo",
+      "files": [],
+      "position": {
+        "x": -502.16838745747043,
+        "y": 1067.7782411692149
+      },
+      "metadata": {}
+    },
+    {
+      "id": "movie-system",
+      "name": "Movie Review System",
+      "type": "application",
+      "description": "Cinema review assistant — unified DB, GUI, fine-tuning datasets (chatml/completion)",
+      "files": [],
+      "position": {
+        "x": 790.2758185489398,
+        "y": 110.22274807053077
+      },
+      "metadata": {}
+    },
+    {
+      "id": "moa-pipeline",
+      "name": "MOA Pipeline",
+      "type": "rag",
+      "description": "Mixture-of-Agents content pipeline — orchestrates multi-model generation for products, blog, FAQ",
+      "files": [],
+      "position": {
+        "x": -1545.544335333098,
+        "y": 814.1445385287684
+      },
+      "metadata": {}
+    },
+    {
+      "id": "converter",
+      "name": "Data Converter",
+      "type": "service",
+      "description": "XML/JSON/CSV/RSS/Atom converter — embedded in DEVz HUB Dashboard",
+      "files": [],
+      "position": {
+        "x": 1084.8428005652108,
+        "y": -115.20126663107513
+      },
+      "metadata": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-hub-nodle",
+      "source": "hub-main",
+      "target": "nodle-system",
+      "label": "embeds graph",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-zeno",
+      "source": "hub-main",
+      "target": "zeno-browser",
+      "label": "monitors",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-kb",
+      "source": "hub-main",
+      "target": "kb-store",
+      "label": "displays stats",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-cc",
+      "source": "hub-main",
+      "target": "control-center",
+      "label": "displays stats",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-lib",
+      "source": "hub-main",
+      "target": "libraries",
+      "label": "displays stats",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-ai",
+      "source": "hub-main",
+      "target": "ai-models",
+      "label": "pricing & scoring",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-conv",
+      "source": "hub-main",
+      "target": "converter",
+      "label": "contains",
+      "metadata": {}
+    },
+    {
+      "id": "e-nodle-api",
+      "source": "nodle-system",
+      "target": "nodle-api",
+      "label": "CRUD API",
+      "metadata": {}
+    },
+    {
+      "id": "e-nodle-openrouter",
+      "source": "nodle-api",
+      "target": "ai-models",
+      "label": "OpenRouter + Claude 3.7 Sonnet",
+      "metadata": {}
+    },
+    {
+      "id": "e-zeno-ai",
+      "source": "zeno-browser",
+      "target": "ai-models",
+      "label": "uses models",
+      "metadata": {}
+    },
+    {
+      "id": "e-kb-chroma",
+      "source": "kb-store",
+      "target": "chromadb",
+      "label": "indexed in",
+      "metadata": {}
+    },
+    {
+      "id": "e-caddy-zeno",
+      "source": "caddy-proxy",
+      "target": "zeno-browser",
+      "label": "proxy dev",
+      "metadata": {}
+    },
+    {
+      "id": "e-caddy-hub",
+      "source": "caddy-proxy",
+      "target": "hub-main",
+      "label": "proxy :5025",
+      "metadata": {}
+    },
+    {
+      "id": "e-caddy-movie",
+      "source": "caddy-proxy",
+      "target": "movie-system",
+      "label": "proxy :5675",
+      "metadata": {}
+    },
+    {
+      "id": "e-cf-moa",
+      "source": "cf-workers",
+      "target": "moa-pipeline",
+      "label": "orchestrates",
+      "metadata": {}
+    },
+    {
+      "id": "e-moa-ai",
+      "source": "moa-pipeline",
+      "target": "ai-models",
+      "label": "calls models",
+      "metadata": {}
+    },
+    {
+      "id": "e-moa-kb",
+      "source": "moa-pipeline",
+      "target": "kb-store",
+      "label": "generates to",
+      "metadata": {}
+    },
+    {
+      "id": "e-nodle-hub",
+      "source": "nodle-api",
+      "target": "hub-main",
+      "label": "summary API",
+      "metadata": {}
+    },
+    {
+      "id": "e-hub-caddy",
+      "source": "hub-main",
+      "target": "caddy-proxy",
+      "label": "routes through",
+      "metadata": {}
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #000000;
+  color: #e8edf5;
+}
+
+.react-flow {
+  background: #000000;
+}
+
+.react-flow__edge-text {
+  fill: #e8edf5;
+  font-weight: 600;
+  font-size: 10px;
+  background: #0a0d14;
+  padding: 6px 10px;
+  border-radius: 0;
+  /* Sharp edges */
+  border: 1px solid rgba(74, 158, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.react-flow__controls {
+  background: #0a0d14;
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  border-radius: 0;
+  /* Sharp edges */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.react-flow__controls-button {
+  background: #0a0d14;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.3);
+  color: #e8edf5;
+  transition: all 0.2s;
+  border-radius: 0;
+  /* Sharp edges */
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(74, 158, 255, 0.25);
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+.react-flow__minimap {
+  background: #0a0d14;
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  border-radius: 0;
+  /* Sharp edges */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(0, 0, 0, 0.9);
+}
+
+.react-flow__attribution {
+  background: rgba(10, 13, 20, 0.9);
+  padding: 4px 8px;
+  border-radius: 0;
+  /* Sharp edges */
+  font-size: 10px;
+  color: #7a8396;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+}
